@@ -95,7 +95,7 @@ public static async isLoginValid(
     }
 }
 
-public static idUserValid(
+public static async idUserValid(
     req: Request,
     res: Response,
     next: NextFunction
@@ -103,7 +103,7 @@ public static idUserValid(
     try {
     const { userId } = req.params;
     const database = new UserDatabase();
-    let userID = database.getUserID(userId);
+    let userID = await database.getUserID(userId);
     if (!userID) {
         return RequestError.fieldNotProvided(res,"Id user");
     }
