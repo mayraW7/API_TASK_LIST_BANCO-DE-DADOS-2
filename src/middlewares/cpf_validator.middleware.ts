@@ -22,14 +22,14 @@ export class CPFvalidatorMiddleware {
             return ServerError.genericError(res, error)
         }
     }
-    public static cpfAlreadyExists(
+    public static async cpfAlreadyExists(
         req: Request, res: Response, next:NextFunction
     ){
         try {
             const { cpf } = req.body;
  
             const userDatabase = new UserDatabase();
-            let userCpf = userDatabase.getCPF(cpf);            
+            let userCpf = await userDatabase.getCPF(cpf);            
             if(userCpf){
                     return RequestError.badRequest(res,"Cpf")}
             next();

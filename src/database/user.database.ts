@@ -16,9 +16,10 @@ export class UserDatabase {
     };
 
     public async list(): Promise<User[]>{
-        const result = await DatabaseConnection.connection.query("select * from tasks_list.user");
+        let query = `select * from tasks_list.user`;
+        const result: any[] = await DatabaseConnection.connection.query(query);
 //resultado de cada linha da query está sendo mapeada e transformada em um model (classe User)
-        return result.rows.map(row=> this.mapToModel(row));
+        return result.map(row=> this.mapToModel(row));
     };
 
 //mapToModel - foi criado para integrar os valores do banco de dados com o backEnd, ele mapeia cada linha e retorna conforme o que foi programado.
