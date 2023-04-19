@@ -1,8 +1,27 @@
+import { Connection } from "pg";
 import { User } from "../../models/user.model";
 import { DatabaseConnection } from "../config/database.connection";
+import { UserEntity } from "../entities/user.entity";
 
 export class UserDatabase {
+    private repository = DatabaseConnection.connection.getRepository(UserEntity);
 
+    public async listEntity(){
+        const connection = DatabaseConnection.connection;
+        const repository = connection.getRepository(UserEntity);
+
+        const result = await repository.find();
+        return result.map((user) => this.mapEntityToModel(user));
+    }
+    private mapEntityToModel(entity: UserEntity): User {
+        return User.create(
+          entity.id,
+          entity.username,
+          entity.email,
+          entity.cpf,
+          entity.pass
+        );
+      }
     public async createUser(user: User){
 
         let query = `insert into tasks_list.user `;
@@ -21,6 +40,7 @@ export class UserDatabase {
 //resultado de cada linha da query está sendo mapeada e transformada em um model (classe User)
         return result.map(row=> this.mapToModel(row));
     };
+
 
 //mapToModel - foi criado para integrar os valores do banco de dados com o backEnd, ele mapeia cada linha e retorna conforme o que foi programado.
 // para transformar cada linha que "estava" "ANY" em "USER" foi necessário criar o método "CREATE" lá na classe User(user.model.ts)

@@ -14,6 +14,10 @@ export default new DataSource({
     ssl: {
         rejectUnauthorized: false
     },
-    synchronize: false,
     //se true: faz sincronização automática entre Banco de Dados e tyORM;
+    synchronize: false,
+    //config para garantir que só procure entitys nesta pasta;
+    entities: ["src/database/entities/**/*.ts"],
+    schema: "tasks_list"
+
 });

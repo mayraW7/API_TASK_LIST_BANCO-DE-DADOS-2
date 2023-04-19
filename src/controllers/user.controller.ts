@@ -12,12 +12,12 @@ export class UserController {
             try{
                 const {id} = req.query;
                 const database = new UserDatabase();
-                let users = await database.list();
-
-                const result = users.map((user)=> user.toJson());
+                // let users = await database.list();
+                let users = await database.listEntity();
+                 const result = users.map((user)=> user.toJson());
                 return SuccessResponse.success(
-                    res,"User successfully obtained", users);
-                    console.log(users)
+                    res,"User successfully obtained", result);
+                    
             }catch(error:any){
                 return ServerError.genericError(res,error)
             }
