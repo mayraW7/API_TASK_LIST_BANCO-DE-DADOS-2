@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response,} from "express";
-import { UserDatabase } from "../database/user.database";
+import { UserDatabase } from "../database/repositories/user.database";
 import { RequestError } from "../errors/request.error";
 import { ServerError } from "../errors/server.error";
 import { CPFvalidatorMiddleware } from "./cpf_validator.middleware";

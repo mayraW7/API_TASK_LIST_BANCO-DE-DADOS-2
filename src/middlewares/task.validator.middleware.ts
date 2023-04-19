@@ -3,7 +3,7 @@ import {
     Request,
     Response,
   } from "express";
-  import { UserDatabase } from "../database/user.database";
+  import { UserDatabase } from "../database/repositories/user.database";
   import { ServerError } from "../errors/server.error";
   import { RequestError } from "../errors/request.error";
 import { UserValidatorMiddleware } from "./user.validator.middleware";

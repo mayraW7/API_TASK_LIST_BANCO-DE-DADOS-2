@@ -1,5 +1,5 @@
-import { User } from "../models/user.model";
-import { DatabaseConnection } from "./database.connection";
+import { User } from "../../models/user.model";
+import { DatabaseConnection } from "../config/database.connection";
 
 export class UserDatabase {
 
@@ -32,24 +32,24 @@ export class UserDatabase {
 
     public async getUserID(id: string) {
     const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where id = '${id}'`)
-    if(result.rows.length === 0){
+    if(result.length === 0){
         return null;
     }
 //para retornar a primeira linha do array qdo ele encontra o "id":
-    const row = result.rows[0];
+    const row = result[0];
     return this.mapToModel(row);
     }
 
     public async getEmail(email: string){
         const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where email = '${email}'`)
-        if(result.rows.length === 0){
+        if(result.length === 0){
             return null;
     };}
 
     public async getOne(email: string, pass: string) {
 //    return users.find((item)=>item.email === email && item.pass === pass)
     const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where email = '${email}' and pass = '${pass}'`)
-    if(result.rows.length === 0){
+    if(result.length === 0){
         return null;
     };
 
@@ -58,7 +58,7 @@ export class UserDatabase {
     public async getCPF(cpf: number){
 //    return users.find((user)=>user.cpf === cpf)
     const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where id = '${cpf}'`)
-    if(result.rows.length === 0){
+    if(result.length === 0){
         return null;
     };}
     

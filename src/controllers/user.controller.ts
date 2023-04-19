@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserDatabase } from "../database/user.database";
+import { UserDatabase } from "../database/repositories/user.database";
 import { ServerError } from "../errors/server.error";
 import { User } from "../models/user.model";
 import { SuccessResponse } from "../util/response.success";

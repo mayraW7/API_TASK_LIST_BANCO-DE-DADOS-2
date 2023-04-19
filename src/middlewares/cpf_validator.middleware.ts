@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { RequestError } from "../errors/request.error";
 import { cpf as validCPF} from "cpf-cnpj-validator";
 import { ServerError } from "../errors/server.error";
-import { UserDatabase } from "../database/user.database";
+import { UserDatabase } from "../database/repositories/user.database";
 
 export class CPFvalidatorMiddleware {
     public static cpfValidMiddleware (
