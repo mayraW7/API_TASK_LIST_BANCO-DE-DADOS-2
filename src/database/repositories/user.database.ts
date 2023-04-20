@@ -1,18 +1,11 @@
-import { Connection } from "pg";
 import { User } from "../../models/user.model";
 import { DatabaseConnection } from "../config/database.connection";
 import { UserEntity } from "../entities/user.entity";
 
 export class UserDatabase {
+
     private repository = DatabaseConnection.connection.getRepository(UserEntity);
 
-    public async listEntity(){
-        const connection = DatabaseConnection.connection;
-        const repository = connection.getRepository(UserEntity);
-
-        const result = await repository.find();
-        return result.map((user) => this.mapEntityToModel(user));
-    }
     private mapEntityToModel(entity: UserEntity): User {
         return User.create(
           entity.id,
@@ -21,83 +14,79 @@ export class UserDatabase {
           entity.cpf,
           entity.pass
         );
-      }
+    }
+
+    public async listEntity(): Promise<User[]>{
+        const result = await this.repository.find();
+        return result.map((user) => this.mapEntityToModel(user));
+    }
+
     public async createUser(user: User){
+        const userEntity = this.repository.create({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            cpf: user.cpf,
+            pass: user.pass,
+          });
+          const result = await this.repository.save(userEntity);
+      
+          return this.mapEntityToModel(result);      
+    };
 
-        let query = `insert into tasks_list.user `;
-        query += `(id, username, email, cpf, pass) `
-        query += `values `
-        query += `('${user.id}', '${user.username}', '${user.email}', ${user.cpf}, ${user.pass}); `;
- //       const values = [user.id, user.userName, user.email, user.cpf, user.pass];
+    public async getUserID(id: string): Promise<User | null> {
 
-        await DatabaseConnection.connection.query(query);
+        const result = await this.repository.findOneBy({id});
+        
+        if (result === null){return null;}
+
+        return this.mapEntityToModel(result);
+    };
+
+    public async getEmail(email: string): Promise<User | null> {
+
+        const result = await this.repository.findOneBy({email});
+        
+        if (result === null){ return null;}
+
+        return this.mapEntityToModel(result);
+    }
+
+    public async getOne(email: string, pass: string): Promise<User | null> {
+        const result = await this.repository.findOne({
+            where: {email, pass,},
+        });
+        
+        if (result === null){ return null;}
+
+        return this.mapEntityToModel(result);
+    }
+
+    public async getCPF(cpf: number): Promise<User | null> {
+        const result = await this.repository.findOneBy({cpf});
+        
+        if (result === null){return null;}
+
+        return this.mapEntityToModel(result);
+    }
     
-    };
+    public async setUpdateUser( id:any, username:string,  pass: string): Promise<number>{
+        const result =  await this.repository.update({
+            id
+        },{
+            username,
+            pass,
+        });
 
-    public async list(): Promise<User[]>{
-        let query = `select * from tasks_list.user`;
-        const result: any[] = await DatabaseConnection.connection.query(query);
-//resultado de cada linha da query está sendo mapeada e transformada em um model (classe User)
-        return result.map(row=> this.mapToModel(row));
-    };
-
-
-//mapToModel - foi criado para integrar os valores do banco de dados com o backEnd, ele mapeia cada linha e retorna conforme o que foi programado.
-// para transformar cada linha que "estava" "ANY" em "USER" foi necessário criar o método "CREATE" lá na classe User(user.model.ts)
-    private mapToModel(row:any): User {
-        return User.create(row.id, row.username, row.email.trim(), row.cpf, row.pass);
+        return result.affected ?? 0;
     }
 
-//observe que ao passar o mouse o método get retorna 'NULL'(se não encontrar id) ou 'User'(por conta do mapToModel).
+    public async delete(id: string): Promise<number>{
 
-    public async getUserID(id: string) {
-    const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where id = '${id}'`)
-    if(result.length === 0){
-        return null;
-    }
-//para retornar a primeira linha do array qdo ele encontra o "id":
-    const row = result[0];
-    return this.mapToModel(row);
-    }
+        const result =  await this.repository.delete({id});
+//delete retorna affected - retornando number ou null - "zero" se não achar ou 1 se encontrar.
+        return result.affected ?? 0;
 
-    public async getEmail(email: string){
-        const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where email = '${email}'`)
-        if(result.length === 0){
-            return null;
-    };}
-
-    public async getOne(email: string, pass: string) {
-//    return users.find((item)=>item.email === email && item.pass === pass)
-    const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where email = '${email}' and pass = '${pass}'`)
-    if(result.length === 0){
-        return null;
-    };
-
-    };
-
-    public async getCPF(cpf: number){
-//    return users.find((user)=>user.cpf === cpf)
-    const result = await DatabaseConnection.connection.query(`select * from tasks_list.user where id = '${cpf}'`)
-    if(result.length === 0){
-        return null;
-    };}
-    
-    public async setUpdateUser( id:any, user: Partial<User>
-      //  username:string, email:string,password:string id:any,
-         ){
-        // Partial - trata todos 
-        let query =`update tasks_list.user `
-        query += `set username = '${user.username}', `
-        query += `email = '${user.email}', `
-        query += `pass = '${user.pass}', `
-        query += `dthr_atualizacao = current_timestamp  `
-        query += `where id = '${id}' `
-
-        await DatabaseConnection.connection.query(query);
-    }
-
-    public async delete(id: string){
-        await DatabaseConnection.connection.query(`delete from tasks_list.user where id ='${id}' `);
     };
 
 }

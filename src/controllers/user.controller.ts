@@ -9,18 +9,18 @@ import { RequestError } from "../errors/request.error";
 export class UserController {
 
     public async list(req: Request, res:Response){
-            try{
-                const {id} = req.query;
-                const database = new UserDatabase();
-                // let users = await database.list();
-                let users = await database.listEntity();
-                 const result = users.map((user)=> user.toJson());
-                return SuccessResponse.success(
-                    res,"User successfully obtained", result);
-                    
-            }catch(error:any){
-                return ServerError.genericError(res,error)
-            }
+        try{
+            const {id} = req.query;
+            const database = new UserDatabase();
+
+            let users = await database.listEntity();
+            const result = users.map((user)=> user.toJson());
+            return SuccessResponse.success(
+                res,"User successfully obtained", result);
+                
+        }catch(error:any){
+            return ServerError.genericError(res,error)
+        }
     }
 
     public async createUser(req: Request, res: Response){
@@ -31,7 +31,8 @@ export class UserController {
             const userCreated = new User (username,email,cpf,pass);
             await database.createUser(userCreated);
 
-            return SuccessResponse.created(res,"New user successfully created!", userCreated)
+            return SuccessResponse.created(res,
+                "New user successfully created!", userCreated.toJson())
         }catch (error:any){
             return ServerError.genericError(res,error);
         }
@@ -41,9 +42,9 @@ export class UserController {
         try{
             const {email,pass} = req.body;
             const database = new UserDatabase();
+
             let user = await database.getOne(email,pass);
-            return SuccessResponse.success(
-                res,"User successfully obtained",user);
+            return SuccessResponse.success(res,"User successfully obtained",user);
         }catch(error:any){
             return ServerError.genericError(res,error)
         }
@@ -54,12 +55,10 @@ export class UserController {
             const { userId } = req.params;
             const database = new UserDatabase();
             let user = await database.getUserID(userId);
-            if(!user) {
-                return RequestError.notFound(res, "User");
-            }
-            const idResult = user.toJson();
 
-            return SuccessResponse.success(res,"Usuário:", idResult);
+            if(!user) {return RequestError.notFound(res, "User"); }
+
+            return SuccessResponse.success(res,"Usuário:", user.toJson());
         
         }catch(error:any){
             return ServerError.genericError(res,error)
@@ -70,10 +69,13 @@ export class UserController {
         try{
             const {userId} = req.params;
             const database = new UserDatabase();
-            const user = await database.getUserID(userId);
-            if (!user) {return RequestError.notFound(res,"User")}
-           await database.delete(user.id);
-            return SuccessResponse.success(res,"User successfully deleted",user);
+            const result = await database.delete(userId);
+
+            if (result === 0) {return RequestError.notFound(res,"User")}
+            
+            return SuccessResponse.success(res,
+                "User successfully deleted", userId);
+
         }catch(error:any){
             return ServerError.genericError(res,error)
         }
@@ -82,19 +84,12 @@ export class UserController {
     public async updateUser (req: Request, res: Response){
         try{
             const { userId } = req.params;
-            const { username, email, pass } = req.body;
+            const { username, pass } = req.body;
             const database = new UserDatabase();
-            const user = await database.getUserID(userId);
+            const result = await database.setUpdateUser(userId, username, pass);
+            if(result === 0 ){return RequestError.notFound(res, 'User')};
 
-            if(!user){
-                return RequestError.notFound(res, 'User')
-            }
-            user.email = email
-            user.pass = pass
-            user.username = username
-            await database.setUpdateUser(user.id, user);
-            
-            return SuccessResponse.success(res, "User successfully update",user);
+            return SuccessResponse.success(res, "User successfully update",userId);
             
         }catch(error:any){
             return ServerError.genericError(res,error)
