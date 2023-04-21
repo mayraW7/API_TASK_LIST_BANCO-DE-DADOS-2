@@ -17,21 +17,21 @@ export class UserDatabase {
     }
 
     public async listEntity(): Promise<User[]>{
-        const result = await this.repository.find();
+        const result = await UserEntity.find();
         return result.map((user) => this.mapEntityToModel(user));
     }
 
     public async createUser(user: User){
-        const userEntity = this.repository.create({
+        const userEntity = UserEntity.create({
             id: user.id,
             username: user.username,
             email: user.email,
             cpf: user.cpf,
             pass: user.pass,
           });
-          const result = await this.repository.save(userEntity);
-      
-          return this.mapEntityToModel(result);      
+ //         const result = await userEntity.save();  
+        const result = await this.repository.save(userEntity);  
+        return this.mapEntityToModel(result);      
     };
 
     public async getUserID(id: string): Promise<User | null> {

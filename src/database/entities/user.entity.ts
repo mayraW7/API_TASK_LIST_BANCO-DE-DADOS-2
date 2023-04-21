@@ -1,11 +1,11 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({
 //se eu não colocar o nome ele automaticamente entende o nome da classe como o nome do arquivo: (ex.: user_entity), também gera por default o schema "public".
     name: "user",
     schema: "tasks_list"
 })
-export class UserEntity {
+export class UserEntity extends BaseEntity{
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
