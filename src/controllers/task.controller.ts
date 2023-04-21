@@ -4,6 +4,7 @@ import { RequestError } from "../errors/request.error";
 import { Task } from "../models/task.model";
 import { SuccessResponse } from "../util/response.success";
 import { ServerError } from "../errors/server.error";
+import { TaskDatabase } from "../database/repositories/task.database";
 
 
 
@@ -14,11 +15,10 @@ export class TaskController {
       const { userId } = req.params;
       const { description, filed } = req.query;
 
-      const database = new UserDatabase();
-      const user = await database.getUserID(userId);
-      let taskList = user?.tasks;
+      const database = new TaskDatabase();
+      let result = await database.list(userId,description ? String(description) : undefined);
       if (description) {
-        taskList = taskList?.filter(
+        result = result?.filter(
           (task) =>
             task.description
               .toString()
@@ -27,11 +27,11 @@ export class TaskController {
         );
       }
       if (filed !== undefined) {
-        taskList = taskList?.filter(
+        result = result?.filter(
           (task) => task.filed === true
         );
       } else {
-        taskList = taskList?.filter(
+        result = result?.filter(
           (task) => task.filed === false
         );
       }
@@ -39,7 +39,7 @@ export class TaskController {
       return SuccessResponse.success(
         res,
         "Tasks successfully listed",
-        taskList
+        result
       );
     } catch (error: any) {
       return ServerError.genericError(res, error);

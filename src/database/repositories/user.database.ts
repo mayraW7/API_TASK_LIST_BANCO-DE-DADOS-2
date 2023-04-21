@@ -29,7 +29,8 @@ export class UserDatabase {
             cpf: user.cpf,
             pass: user.pass,
           });
- //         const result = await userEntity.save();  
+ //Exemplo TypeORM como ActiveRecord - foi definido a extends BaseEntity - criando a capacidade de a própria entidade adquirir e aplicar os métodos: "save, create, remove", etc...
+ //const result = await userEntity.save();  
         const result = await this.repository.save(userEntity);  
         return this.mapEntityToModel(result);      
     };

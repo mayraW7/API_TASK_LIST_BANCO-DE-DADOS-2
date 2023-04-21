@@ -38,4 +38,11 @@ export class Task {
     this._detailing = detailing;
     }
 
+    public static create(id: string, description: string, detailing:string, filed:boolean){
+        const task = new Task(description, detailing);
+        task._id = id;
+        task._filed = filed;
+        return task;
+    }
+
 }
