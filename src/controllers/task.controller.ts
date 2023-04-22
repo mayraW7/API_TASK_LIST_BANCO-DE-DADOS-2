@@ -10,13 +10,25 @@ import { TaskDatabase } from "../database/repositories/task.database";
 
 
 export class TaskController {
+
+  public async list(req: Request, res: Response){
+    try{
+        const database = new TaskDatabase();
+        const result = await database.list();
+    return SuccessResponse.success(
+      res, "Tasks successfully listed",result);
+    }catch (error: any) {
+    return ServerError.genericError(res, error);
+    }
+  }
+
   public async listAll(req: Request, res: Response) {
     try {
       const { userId } = req.params;
       const { description, filed } = req.query;
 
       const database = new TaskDatabase();
-      let result = await database.list(userId,description ? String(description) : undefined);
+      let result = await database.listUser(userId,description ? String(description) : undefined);
       if (description) {
         result = result?.filter(
           (task) =>
@@ -45,7 +57,6 @@ export class TaskController {
       return ServerError.genericError(res, error);
     }
   }
-
   public async singleTask(req: Request, res: Response) {
     try {
       const { userId, taskId } = req.params;

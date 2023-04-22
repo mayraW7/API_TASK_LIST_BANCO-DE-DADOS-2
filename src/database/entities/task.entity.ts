@@ -34,9 +34,10 @@ export class TaskEntity{
 
     @Column({name: "id_user"})
     userId: string;
-
+    // (User) 1 ----- n (Tasks)
     @ManyToOne(()=> UserEntity)
     @JoinColumn({
+        //tem que ser o mesmo nome, pois é a coluna que junta as duas tabelas(FK)
         name: "id_user"
     })
     user: UserEntity;
