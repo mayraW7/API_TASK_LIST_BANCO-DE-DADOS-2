@@ -1,23 +1,31 @@
 import { User } from "../../models/user.model";
 import { DatabaseConnection } from "../config/database.connection";
 import { UserEntity } from "../entities/user.entity";
+import { TaskDatabase } from "./task.database";
 
 export class UserDatabase {
 
     private repository = DatabaseConnection.connection.getRepository(UserEntity);
 
     private mapEntityToModel(entity: UserEntity): User {
+        //para poder usar tbm qdo vier undefined(tiver um array vazio):
+        const tasksEntity = entity.tasks ?? [];
+        //mapeou cada tasks Entity do user e "trouxe" junto transformando em Model para usar no create:
+        const tasks = tasksEntity.map((item)=> TaskDatabase.mapEntityToModel(item));
         return User.create(
           entity.id,
           entity.username,
           entity.email,
           entity.cpf,
-          entity.pass
+          entity.pass,
+          tasks
         );
     }
 
     public async listEntity(): Promise<User[]>{
-        const result = await UserEntity.find();
+        const result = await UserEntity.find({
+           relations: ["tasks"],
+        });
         return result.map((user) => this.mapEntityToModel(user));
     }
 

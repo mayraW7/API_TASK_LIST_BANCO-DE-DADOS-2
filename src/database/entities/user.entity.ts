@@ -1,4 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { TaskEntity } from "./task.entity";
 
 @Entity({
 //se eu não colocar o nome ele automaticamente entende o nome da classe como o nome do arquivo: (ex.: user_entity), também gera por default o schema "public".
@@ -40,4 +41,10 @@ export class UserEntity extends BaseEntity{
     type: "timestamp",
     })
     updatedAt: Date;
+
+    @OneToMany(
+        () => TaskEntity,
+        (task) => task.user
+      )
+      tasks: TaskEntity[];
 }

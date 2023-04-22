@@ -83,15 +83,13 @@ export class TaskController {
       const { userId } = req.params;
       const { description, detailing } = req.body;
 
-      const databaseUser = new UserDatabase();
-      const user = await databaseUser.getUserID(userId);
-      const task = new Task(description, detailing);
-      user?.addTask(task);
+      const database = new TaskDatabase();
+      const result = await database.create(userId, new Task(description, detailing));
 
       return SuccessResponse.created(
         res,
         "task successfully created",
-        task
+        result
       );
     } catch (error: any) {
       return ServerError.genericError(res, error);
