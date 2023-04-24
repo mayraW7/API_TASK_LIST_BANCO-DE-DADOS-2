@@ -32,11 +32,17 @@ export class TaskDatabase{
         //como é uma list - fazemos o map para retornar as listagens;
         return result.map((item)=> TaskDatabase.mapEntityToModel(item));
     }
-    public async list(){
-        const result = await this.repository.find({
-            relations: [
-                "user"
-            ]});
+    public async list(id: string){
+        const result = await this.repository.find( { where: {
+            id:id,
+        },
+        relations: [
+            "user"
+        ],
+        });
+            if (!result){
+                return 0;
+            }
         return result.map((item)=> TaskDatabase.mapEntityToModel(item));
     }
 
@@ -50,6 +56,35 @@ export class TaskDatabase{
         });
         const result = await this.repository.save(taskEntity);
         return TaskDatabase.mapEntityToModel(result);
+    }
+
+    public async update(id: string, data?: any) {
+    const result = await this.repository.update(
+        {
+        id,
+        },
+        {
+        description: data.description,
+        detailing: data.detailing,
+        filed: data.filed,
+        }
+    );
+
+        if (result.affected === 1) {
+            return {
+            id,
+            data,
+            };
+        }
+
+    return null;
+    }
+
+    public async delete(id: string) {
+        const result = await this.repository.delete({
+            id,
+        });
+        return result.affected ?? 0;
     }
 
 }

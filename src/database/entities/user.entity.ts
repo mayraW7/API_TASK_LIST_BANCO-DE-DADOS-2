@@ -43,8 +43,9 @@ export class UserEntity extends BaseEntity{
     updatedAt: Date;
 
     @OneToMany(
-        () => TaskEntity,
-        (task) => task.user
-      )
-      tasks: TaskEntity[];
+        () => TaskEntity, (task) => task.user, {
+            //vai trazer sempre o relacionamento por default;
+            eager: true
+        })
+        tasks: TaskEntity[];
 }

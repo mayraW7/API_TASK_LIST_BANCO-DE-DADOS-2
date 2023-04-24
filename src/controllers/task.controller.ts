@@ -11,16 +11,16 @@ import { TaskDatabase } from "../database/repositories/task.database";
 
 export class TaskController {
 
-  public async list(req: Request, res: Response){
-    try{
-        const database = new TaskDatabase();
-        const result = await database.list();
-    return SuccessResponse.success(
-      res, "Tasks successfully listed",result);
-    }catch (error: any) {
-    return ServerError.genericError(res, error);
-    }
-  }
+  // public async list(req: Request, res: Response){
+  //   try{
+  //       const database = new TaskDatabase();
+  //       const result = await database.list();
+  //   return SuccessResponse.success(
+  //     res, "Tasks successfully listed",result);
+  //   }catch (error: any) {
+  //   return ServerError.genericError(res, error);
+  //   }
+  //}
 
   public async listAll(req: Request, res: Response) {
     try {
@@ -29,22 +29,13 @@ export class TaskController {
 
       const database = new TaskDatabase();
       let result = await database.listUser(userId,description ? String(description) : undefined);
-      if (description) {
-        result = result?.filter(
-          (task) =>
-            task.description
-              .toString()
-              .toLowerCase() ===
-            description?.toString().toLowerCase()
-        );
-      }
-      if (filed !== undefined) {
-        result = result?.filter(
-          (task) => task.filed === true
-        );
-      } else {
-        result = result?.filter(
-          (task) => task.filed === false
+
+      let isFiled: any = undefined;
+
+      if (filed !== undefined && filed !== "") {
+        isFiled = filed?.toString().toLowerCase() === "true";
+        
+        result = result.filter((task) => task.filed === isFiled
         );
       }
 
@@ -59,14 +50,12 @@ export class TaskController {
   }
   public async singleTask(req: Request, res: Response) {
     try {
-      const { userId, taskId } = req.params;
-
-      const database = new UserDatabase();
-      const user = await database.getUserID(userId);
-
-      const task = user?.tasks.find(
-        (task) => task.id === taskId
-      );
+      const { taskId } = req.params;
+      const database = new TaskDatabase();
+      const task =  await database.list(taskId)
+      // const task = user?.tasks.find(
+      //   (task) => task.id === taskId
+      // );
 
       return SuccessResponse.success(
         res,
@@ -98,27 +87,31 @@ export class TaskController {
 
   public async update(req: Request, res: Response) {
     try {
-      const { userId, taskId } = req.params;
+      const { taskId } = req.params;
       const { description, detailing, filed } = req.body;
 
-      const userDatabase = new UserDatabase();
-      const user = await userDatabase.getUserID(userId);
-      const taskList = user?.tasks;
-      const task = taskList?.find((task)=>(task.id === taskId));
-      if(description){
-        task!.description = description;
-      }
-      if(detailing){
-        task!.detailing = detailing;
-      }
-      if(filed !== undefined){
-        task!.filed = filed;
-      }
+      // const userDatabase = new UserDatabase();
+      // const user = await userDatabase.getUserID(userId);
+
+      const data = {description,detailing,filed};
+      const database = new TaskDatabase();
+      const result = await database.update(taskId,data);
+      // const taskList = user?.tasks;
+      // const task = taskList?.find((task)=>(task.id === taskId));
+      // if(description){
+      //   task!.description = description;
+      // }
+      // if(detailing){
+      //   task!.detailing = detailing;
+      // }
+      // if(filed !== undefined){
+      //   task!.filed = filed;
+      // }
       
       return SuccessResponse.success(
         res,
         "Task successfully updated.",
-        { task, taskList }
+        { result }
       );
     } catch (error: any) {
       return ServerError.genericError(res, error);
@@ -127,30 +120,24 @@ export class TaskController {
 
   public async delete(req: Request, res: Response) {
     try {
-      const { userId, taskId } = req.params;
+      const {  taskId } = req.params;
 
-      const database = new UserDatabase();
-      const user = await database.getUserID(userId);
+      const database = new TaskDatabase();
+      const result = await database.delete(taskId)
 
-      const taskList = user!.tasks;
-
-      const taskIndex = taskList.findIndex(
-        (task) => task.id === taskId
-      );
-
-      if (taskIndex < 0) {
+      if (result === 0) {
         return RequestError.notFound(res, "task");
       }
 
-      const taskDeleted = taskList.splice(
-        taskIndex!,
-        1
-      );
+      // const taskDeleted = taskList.splice(
+      //   taskIndex!,
+      //   1
+      //);
 
       return SuccessResponse.success(
         res,
         "Task successfully deleted",
-        taskDeleted
+        taskId
       );
     } catch (error: any) {
       return ServerError.genericError(res, error);

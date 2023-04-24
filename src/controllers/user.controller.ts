@@ -10,7 +10,6 @@ export class UserController {
 
     public async list(req: Request, res:Response){
         try{
-            const {id} = req.query;
             const database = new UserDatabase();
 
             let users = await database.listEntity();

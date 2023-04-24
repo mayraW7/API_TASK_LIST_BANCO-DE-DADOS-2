@@ -10,7 +10,7 @@ export class UserDatabase {
     private mapEntityToModel(entity: UserEntity): User {
         //para poder usar tbm qdo vier undefined(tiver um array vazio):
         const tasksEntity = entity.tasks ?? [];
-        //mapeou cada tasks Entity do user e "trouxe" junto transformando em Model para usar no create:
+        //mapeou cada tasks Entity do user e "trouxe junto" transformando em Model para usar no create:
         const tasks = tasksEntity.map((item)=> TaskDatabase.mapEntityToModel(item));
         return User.create(
           entity.id,
@@ -24,8 +24,9 @@ export class UserDatabase {
 
     public async listEntity(): Promise<User[]>{
         const result = await UserEntity.find({
-           relations: ["tasks"],
-        });
+            //se quiser trazer as taks na listagem, só colocar a relação:
+            //    relations: ["tasks"],
+            });
         return result.map((user) => this.mapEntityToModel(user));
     }
 
@@ -97,5 +98,16 @@ export class UserDatabase {
         return result.affected ?? 0;
 
     };
+//2ª opção para deletar:
+    public async daleteWithRemove(id:string): Promise<number>{
+        const userEntity = await this.repository.findOneBy({
+            id,
+        });
+        if (!userEntity){
+            return 0; 
+        }
+        await userEntity.remove();
 
+        return 1;
+    }
 }
