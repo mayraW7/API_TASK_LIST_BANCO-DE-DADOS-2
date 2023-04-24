@@ -37,9 +37,6 @@ app.post("/:userId/tasks", validationsTaskCreate, new TaskController().create);
 // GET http://localhost:777/user/:userId/tasks <- ROUTE TO LIST USER TASKS
 app.get("/:userId/tasks", validationsUserExist, new TaskController().listAll);
 
-// GET http://localhost:777/user/:userId/tasks <- ROUTE2 TO LIST USER TASKS
-//app.get("/:userId/tasks", validationsUserExist, new TaskController().list);
-
 // GET http://localhost:777/user/:userId/tasks/:taskId <- ROUTE TO SINGLE TASK
 app.get( "/:userId/tasks/:taskId", validationsTaskExist, new TaskController().singleTask);
 
