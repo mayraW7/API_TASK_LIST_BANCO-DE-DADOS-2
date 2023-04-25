@@ -24,11 +24,11 @@ export class TaskController {
         result = result.filter((task) => task.filed === isFiled
         );
       }
-
+      const resultJson = result.map((task)=> task.toJson());
       return SuccessResponse.success(
         res,
         "Tasks successfully listed",
-        result
+        resultJson
       );
     } catch (error: any) {
       return ServerError.genericError(res, error);
@@ -39,8 +39,8 @@ export class TaskController {
     try {
       const { taskId } = req.params;
       const database = new TaskDatabase();
-      const task =  await database.list(taskId)
-
+      let task =  await database.list(taskId)
+      
       return SuccessResponse.success(
         res,"Task successfully listed",task);
 

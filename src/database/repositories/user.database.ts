@@ -24,7 +24,7 @@ export class UserDatabase {
 
     public async listEntity(): Promise<User[]>{
         const result = await UserEntity.find({
-            //se quiser trazer as taks na listagem, só colocar a relação:
+            //para trazer as taks na listagem retornada é só colocar a relação. Ex.:
             //    relations: ["tasks"],
             });
         return result.map((user) => this.mapEntityToModel(user));
@@ -38,7 +38,7 @@ export class UserDatabase {
             cpf: user.cpf,
             pass: user.pass,
           });
- //Exemplo TypeORM como ActiveRecord - foi definido a extends BaseEntity - criando a capacidade de a própria entidade adquirir e aplicar os métodos: "save, create, remove", etc...
+ //Exemplo TypeORM como ActiveRecord - foi definido a extends BaseEntity - criando a capacidade de a própria entidade adquirir e aplicar os métodos: "save, create, remove", etc... Ex.:
  //const result = await userEntity.save();  
         const result = await this.repository.save(userEntity);  
         return this.mapEntityToModel(result);      
@@ -98,7 +98,7 @@ export class UserDatabase {
         return result.affected ?? 0;
 
     };
-//2ª opção para deletar:
+//2ª opção para deletar. Exemplo com "remove":
     public async daleteWithRemove(id:string): Promise<number>{
         const userEntity = await this.repository.findOneBy({
             id,

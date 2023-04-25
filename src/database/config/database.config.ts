@@ -18,6 +18,7 @@ export default new DataSource({
     synchronize: false,
     //config para garantir que só procure entitys nesta pasta;
     entities: ["src/database/entities/**/*.ts"],
-    schema: "tasks_list"
+    migrations: ["src/database/migrations/**/*.ts"],
+    schema: "tasklist2",
 
 });

@@ -37,6 +37,16 @@ export class Task {
     public set detailing(detailing:string){
     this._detailing = detailing;
     }
+//adapter ToJson
+public toJson(){
+    return {
+        taskId: this._id,
+        description: this._description,
+        detailing: this._detailing,
+        filed: this._filed
+    };
+}
+
 //método criado para poder acessar o id:
     public static create(id: string, description: string, detailing:string, filed:boolean){
         const task = new Task(description, detailing);

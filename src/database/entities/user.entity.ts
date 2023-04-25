@@ -4,7 +4,7 @@ import { TaskEntity } from "./task.entity";
 @Entity({
 //se eu não colocar o nome ele automaticamente entende o nome da classe como o nome do arquivo: (ex.: user_entity), também gera por default o schema "public".
     name: "user",
-    schema: "tasks_list"
+    schema: "tasklist2"
 })
 export class UserEntity extends BaseEntity{
     @PrimaryGeneratedColumn("uuid")
@@ -41,10 +41,10 @@ export class UserEntity extends BaseEntity{
     type: "timestamp",
     })
     updatedAt: Date;
-
+//{@OneToMany} só "sobrevive" se na entity de relação contém o {@manyToOne};
     @OneToMany(
         () => TaskEntity, (task) => task.user, {
-            //vai trazer sempre o relacionamento por default;
+            //"eager = true" vai trazer sempre o relacionamento por default;
             eager: true
         })
         tasks: TaskEntity[];

@@ -1,12 +1,9 @@
 import { Task } from "../../models/task.model";
-import { User } from "../../models/user.model";
 import { DatabaseConnection } from "../config/database.connection";
 import { TaskEntity } from "../entities/task.entity";
-import { UserEntity } from "../entities/user.entity";
-
-
 
 export class TaskDatabase{
+    
     private repository = DatabaseConnection.connection.getRepository(TaskEntity);
 
 //mapEntityToModel - recebe uma "entity de task" e tem que retornar um "Task"

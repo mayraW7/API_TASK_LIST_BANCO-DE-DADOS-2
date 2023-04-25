@@ -5,7 +5,7 @@ import { UserEntity } from "./user.entity";
 
 @Entity({
     name: "tasks",
-    schema: "tasks_list"
+    schema: "tasklist2"
 })
 export class TaskEntity{
     @PrimaryColumn("uuid")
